@@ -1,74 +1,39 @@
-import {
-  Box,
-  CircularProgress,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-} from "@mui/material";
-import Select, {
-  IndicatorSeparatorProps,
-  ValueContainerProps,
-  components,
-} from "react-select";
+import { Box, CircularProgress, Typography } from "@mui/material";
+import Select from "react-select";
 import DrawerContainer from "./components/drawerContainer";
 import ArrowUpwardOutlinedIcon from "@mui/icons-material/ArrowUpwardOutlined";
 import CameraRearOutlinedIcon from "@mui/icons-material/CameraRearOutlined";
 import { useEffect, useState } from "react";
 import { LineChart } from "@mui/x-charts/LineChart";
-import { get, getWithAuth } from "../../api/api";
+import { get } from "../../api/api";
 import { toastError, toastSuccess } from "./components/toast";
 
 function Dashboard() {
   const twentyeightdays = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-    22, 23, 24, 25, 26, 27, 28
-  ];
-  let twentyeightdata = [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    22, 23, 24, 25, 26, 27, 28,
   ];
   const thirtydays = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
     22, 23, 24, 25, 26, 27, 28, 29, 30,
   ];
-  let thirtydata = [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-  ];
   const thirtyonedays = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
     22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
   ];
-  let thirtyonedata = [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-  ];
   const daysPerMonth = [
     thirtyonedays, // January
-    twentyeightdays,   // February
+    twentyeightdays, // February
     thirtyonedays, // March
-    thirtydays,      // April
-    thirtyonedays,   // May
-    thirtydays,      // June
-    thirtyonedays,   // July
-    thirtyonedays,   // August
-    thirtydays,      // September
-    thirtyonedays,   // October
-    thirtydays,      // November
-    thirtyonedays    // December
-  ];
-  const dataPerMonth = [
-    thirtyonedata, // January
-    twentyeightdata,   // February
-    thirtyonedata, // March
-    thirtydata,      // April
-    thirtyonedata,   // May
-    thirtydata,      // June
-    thirtyonedata,   // July
-    thirtyonedata,   // August
-    thirtydata,      // September
-    thirtyonedata,   // October
-    thirtydata,      // November
-    thirtyonedata    // December
+    thirtydays, // April
+    thirtyonedays, // May
+    thirtydays, // June
+    thirtyonedays, // July
+    thirtyonedays, // August
+    thirtydays, // September
+    thirtyonedays, // October
+    thirtydays, // November
+    thirtyonedays, // December
   ];
 
   const options = [
@@ -87,141 +52,130 @@ function Dashboard() {
   ];
 
   const currentDate = new Date();
+  // const todaysDate = currentDate.getDate()
+  // // console.log(todaysDate)
   const [currentMonth, setCurrentMonth] = useState<number>(
     currentDate.getMonth()
   );
-  const [trigger, setTrigger] = useState<boolean>(false);
+
+  const [triggerData, setTriggerData] = useState<boolean>(false);
+  const [triggerCamera, setTriggerCamera] = useState<boolean>(false);
+
   const [isGraphLoading, setIsGraphLoading] = useState<boolean>(true);
+  const [isCameraLoading, setIsCameraLoading] = useState<boolean>(true);
+
   const [data, setData] = useState<any[]>([]);
   const [graphData, setGraphData] = useState<any[]>([]);
+  const [weightData, setWeightData] = useState<number>(0);
+  
   const [graphAxis, setGraphAxis] = useState<number[]>([]);
-  const [cameraList, setCameraList] = useState<any[]>([
-    { nama: "Camera 3", status: "ON" },
-    { nama: "Camera 1", status: "OFF" },
-    { nama: "Camera 3", status: "ON" },
-    { nama: "Camera 1", status: "OFF" },
-    { nama: "Camera 3", status: "ON" },
-    { nama: "Camera 3", status: "ON" },
-    { nama: "Camera 3", status: "ON" },
-    { nama: "Camera 3", status: "ON" },
-  ]);
+  
+  const [cameraData, setCameraData] = useState<any[]>([]);
+  const [cameraList, setCameraList] = useState<any[]>([]);
 
-  const token = localStorage.getItem("access_token");
+  // const token = localStorage.getItem("access_token");
   const getDataGrafik = async () => {
     setIsGraphLoading(true);
     // if (token) {
-      try {
-        // setTrigger(false);
-        const grafik = await get("avg-weight-per-specific-month?month="+(currentMonth+1));
-        console.log(grafik)
-        setData(
-          grafik.data.data.map((data: any) => {
-            return {
-              date: data.date,
-              average_weight: data.average_weight,
-            };
-          })
-        );
-        console.log(currentMonth)
-        // let newMonthData = Array(graphAxis.length).fill(0);
-        // console.log(newMonthData)
-        setGraphAxis(daysPerMonth[currentMonth]);
-        // dataPerMonth[currentMonth-1] = newMonthData;
-        // data.forEach((item, index) => {
-        //     let dateStr = item.date.toString().substr(8,2);
-        //     if (dateStr[0] === "0"){
-        //       dateStr = dateStr[1];
-        //     }
-        //     let date = parseInt(dateStr);
-            
-        //     console.log(date);
-        //     newMonthData[date-1] = item.average_weight;
-        // })
-        // setGraphData(dataPerMonth[currentMonth]);
-        toastSuccess(grafik.data.meta.message);
-        setTrigger(true);
-      } catch (error) {
-        toastError("Get Monthly Data Graph Failed");
-        console.log(error)
-      } 
-      // finally {
-      //   // setIsGraphLoading(false)
-      // }
+    try {
+      const grafik = await get(
+        "avg-weight-per-specific-month?month=" + (currentMonth + 1)
+      );
+      // console.log(grafik);
+      setData(
+        grafik.data.data.map((data: any) => {
+          return {
+            date: data.date,
+            average_weight: data.average_weight,
+          };
+        })
+      );
+      setGraphAxis(daysPerMonth[currentMonth]);
+      toastSuccess(grafik.data.meta.message);
+      setTriggerData(true);
+    } catch (error) {
+      toastError("Get Data Per Month Failed");
+      console.log(error);
+    }
+    // finally {
+    //   // setIsGraphLoading(false)
+    // }
+    // }
+  };
+
+  const getDataCamera = async () => {
+    // if (token) {
+    try {
+      const camera = await get("datacamera");
+      // console.log(camera);
+      setCameraData(
+        camera.data.data.map((data: any) => {
+          return {
+            name: data.name,
+            status: data.status,
+          };
+        })
+      );
+      let newArray = cameraData.slice(length - 8, length - 1);
+      setCameraList(newArray);
+      toastSuccess(camera.data.meta.message);
+      setTriggerCamera(true);
+    } catch (error) {
+      toastError("Get Data Camera Failed");
+      console.log(error);
+    } finally {
+      setIsCameraLoading(false);
+    }
+    // }
+  };
+
+  const getDataWeightDay = async () => {
+    // if (token) {
+    try {
+      const avgWeight = await get("avg-weight-today");
+      console.log(avgWeight);
+      setWeightData(avgWeight.data.data.average_weight
+      );
+      toastSuccess(avgWeight.data.meta.message);
+    } catch (error) {
+      toastError("Get Data Weight Per Day Failed");
+      console.log(error);
+    }
     // }
   };
 
   useEffect(() => {
+    let newArray = cameraData.slice(cameraData.length - 8, cameraData.length);
+    setCameraList(newArray);
+  }, [triggerCamera]);
+
+  useEffect(() => {
     let newMonthData = Array(graphAxis.length).fill(0);
-    console.log(newMonthData)
-    if (newMonthData && data){
-      data.forEach((item, index) => {
-        let dateStr = item.date.toString().substr(8,2);
-        if (dateStr[0] === "0"){
+    // console.log(newMonthData);
+    if (newMonthData && data) {
+      data.forEach((item) => {
+        let dateStr = item.date.toString().substr(8, 2);
+        if (dateStr[0] === "0") {
           dateStr = dateStr[1];
         }
         let date = parseInt(dateStr);
-        
-        console.log(date);
-        newMonthData[date-1] = item.average_weight;
-    })
-    setGraphData(newMonthData);
-    setIsGraphLoading(false);
+
+        // console.log(date);
+        newMonthData[date - 1] = item.average_weight;
+      });
+      setGraphData(newMonthData);
+      setIsGraphLoading(false);
     }
-  },[trigger, currentMonth, graphAxis])
+  }, [triggerData, currentMonth, graphAxis]);
 
   useEffect(() => {
     getDataGrafik();
-    // setGraphAxis(daysPerMonth[currentMonth]);
-    // const newMonthData = Array(graphAxis.length).fill(0);
-    // dataPerMonth[currentMonth-1] = newMonthData;
-    // data.forEach((item, index) => {
-    //     let date = item.date
-    //     console.log(date);
-    //     dataPerMonth[currentMonth][date] = item.average_weight
-    // })
-    // setGraphData(dataPerMonth[currentMonth])
-  },[currentMonth])
+  }, [currentMonth]);
 
-  // useEffect(() => {
-  //   // console.log(currentMonth);
-  //   // console.log(graphAxis);
-  //   // console.log(graphData);
-  //   // if (
-  //   //   currentMonth === 1 ||
-  //   //   currentMonth === 3 ||
-  //   //   currentMonth === 5 ||
-  //   //   currentMonth === 7 ||
-  //   //   currentMonth === 8 ||
-  //   //   currentMonth === 10 ||
-  //   //   currentMonth === 12
-  //   // ) {
-  //   //   setGraphAxis(thirtyonedays);
-  //   // } else if (
-  //   //   currentMonth === 4 ||
-  //   //   currentMonth === 6 ||
-  //   //   currentMonth === 9 ||
-  //   //   currentMonth === 11
-  //   // ) {
-  //   //   setGraphAxis(thirtydays);
-  //   // } else {
-  //   //   setGraphAxis(twentyeightdays);
-  //   // }
-  // }, [trigger]);
-
-  
-
-  // Dropdown Styles
-  //   const IndicatorSeparator = ({
-  //     innerProps,
-  //   }: IndicatorSeparatorProps<any>) => {
-  //     return <span style={{backgroundColor: 'white', opacity: 0, display: 'none'}} {...innerProps} />;
-  //   };
-  //   const ValueContainer = ({
-  //     children,
-  //     ...props
-  //   }: ValueContainerProps<any>) => (
-  //     <components.ValueContainer {...props}>{children}</components.ValueContainer>
-  //   );
+  useEffect(() => {
+    getDataCamera();
+    getDataWeightDay();
+  }, []);
   return (
     <>
       <DrawerContainer height="100vh">
@@ -274,7 +228,7 @@ function Dashboard() {
                   color={"#FF7F48"}
                   fontWeight={600}
                 >
-                  3.02 Kg
+                  {weightData} Kg
                 </Typography>
                 <Typography color={"#000000"}>Wed, Jul 24</Typography>
               </Box>
@@ -345,8 +299,8 @@ function Dashboard() {
             {/* Box 2 */}
             <Box
               borderRadius={4}
-              display={'flex'}
-              flexDirection={'column'}
+              display={"flex"}
+              flexDirection={"column"}
               bgcolor={"#FFFFFF"}
               sx={{ boxShadow: "0px 4px 50px -7px rgba(54, 8, 192, 0.20)" }}
               padding={2.5}
@@ -414,16 +368,19 @@ function Dashboard() {
                   }}
                 />
               </Box>
-              {
-                isGraphLoading ? 
-                <Box sx={{ display: 'flex', color: "#FF7F48" }} marginX={'auto'} alignItems={'center'} flexGrow={1}>
-                  <CircularProgress color="inherit"/>
+              {isGraphLoading ? (
+                <Box
+                  sx={{ display: "flex", color: "#FF7F48" }}
+                  marginX={"auto"}
+                  alignItems={"center"}
+                  flexGrow={1}
+                >
+                  <CircularProgress color="inherit" />
                 </Box>
-                // <CircularProgress color=/>
-                :
-                <Box display={'flex'} flexGrow={1}>
+              ) : (
+                <Box display={"flex"} flexGrow={1}>
                   <LineChart
-                    sx={{width: 1, height: 1}}
+                    sx={{ width: 1, height: 1 }}
                     xAxis={[{ data: graphAxis }]}
                     series={[
                       {
@@ -433,7 +390,7 @@ function Dashboard() {
                     ]}
                   />
                 </Box>
-              }
+              )}
             </Box>
             <Box
               borderRadius={4}
@@ -446,39 +403,57 @@ function Dashboard() {
               <Typography color={"#000000"} fontSize={22} fontWeight={"bold "}>
                 Status Kamera
               </Typography>
-              <Box sx={{ width: 1, overflow: "auto", height: 345, paddingRight: "10px" }}>
-                {cameraList.map((item, index) => {
-                  return (
-                    <Box
-                      display={"flex"}
-                      alignItems={"center"}
-                      justifyContent={"space-between"}
-                      width={1}
-                      marginTop={1}
-                      key={index}
-                      overflow={"auto"}
-                    >
+              <Box
+                sx={{
+                  width: 1,
+                  overflow: "auto",
+                  height: 345,
+                  paddingRight: "10px",
+                }}
+              >
+                {isCameraLoading ? (
+                  <Box
+                    sx={{ display: "flex", color: "#FF7F48" }}
+                    marginX={"auto"}
+                    alignItems={"center"}
+                    flexGrow={1}
+                  >
+                    <CircularProgress color="inherit" />
+                  </Box>
+                ) : (
+                  cameraList.map((item, index) => {
+                    return (
                       <Box
-                        borderRadius={50}
-                        bgcolor={"#F5F5F5"}
-                        height={48}
-                        width={48}
                         display={"flex"}
                         alignItems={"center"}
-                        justifyContent={"center"}
+                        justifyContent={"space-between"}
+                        width={1}
+                        marginTop={1}
+                        key={index}
+                        overflow={"auto"}
                       >
-                        <CameraRearOutlinedIcon
-                          sx={{ color: "#FF7F48" }}
-                          fontSize="large"
-                        />
+                        <Box
+                          borderRadius={50}
+                          bgcolor={"#F5F5F5"}
+                          height={48}
+                          width={48}
+                          display={"flex"}
+                          alignItems={"center"}
+                          justifyContent={"center"}
+                        >
+                          <CameraRearOutlinedIcon
+                            sx={{ color: "#FF7F48" }}
+                            fontSize="large"
+                          />
+                        </Box>
+                        <Typography color={"#000000"}>{item.name}</Typography>
+                        <Typography fontWeight={600} color={"#FF7F48"}>
+                          {item.status}
+                        </Typography>
                       </Box>
-                      <Typography color={"#000000"}>{item.nama}</Typography>
-                      <Typography fontWeight={600} color={"#FF7F48"}>
-                        {item.status}
-                      </Typography>
-                    </Box>
-                  );
-                })}
+                    );
+                  })
+                )}
               </Box>
             </Box>
           </Box>

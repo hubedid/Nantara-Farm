@@ -4,34 +4,18 @@ import Logo from "../../../assets/Logo_Farm.png";
 
 import {
   Box,
-  Divider,
   Drawer,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
-  ListItemText,
   Toolbar,
   Typography,
-  alpha,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useLocation } from "react-router-dom";
-// import imgLogo from 'public/images/img_logo_radiologi.webp';
-// import HomeIcon from '@mui/icons-material/Home';
-// import EventRepeatIcon from '@mui/icons-material/EventRepeat';
-// import PersonIcon from '@mui/icons-material/Person';
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
-// import LogoutIcon from '@mui/icons-material/Logout';
-// import { usePathname, useRouter } from 'next/navigation';
-// import LogoutModal from '../Modal/LogoutModal';
-// import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
-// import BiotechIcon from '@mui/icons-material/Biotech';
-// import CoPresentIcon from '@mui/icons-material/CoPresent';
-// import { useSelector } from 'react-redux';
-// import { RootState } from '@src/types/redux';
-// import { toast } from 'react-toastify';
 
 const DrawerContainer = ({
   children,
@@ -40,12 +24,6 @@ const DrawerContainer = ({
   children: React.ReactNode;
   height?: string;
 }) => {
-  //   const { token } = useSelector((state: RootState) => state.auth);
-
-  //   const [showLogoutModal, setShowLogoutModal] = useState<boolean>(false);
-  //   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-
-  //   const router = useRouter();
 
   const navList = [
     {
@@ -61,18 +39,6 @@ const DrawerContainer = ({
   const location = useLocation();
   const path = location.pathname;
 
-  //   useEffect(() => {
-  //     if (token) {
-  //       setIsAuthenticated(true);
-  //     } else {
-  //       if (pathname !== '/') {
-  //         toast.warning('Please relogin', { toastId: 'user-not-found' });
-  //       }
-  //       router.push('/login');
-  //     }
-  //   }, []);
-
-  // nav.title === 'Dashboard' && active ? <img src='./assets/active-dashboard.svg'> : <img src='./assets/dashboard.svg'></img>
   return (
     <>
       <Box
@@ -108,7 +74,7 @@ const DrawerContainer = ({
             </Box>
             <Toolbar />
             <List>
-              {navList.map((nav, index) => {
+              {navList.map((nav) => {
                 const active = nav.url === path;
                 return (
                   <ListItem
@@ -161,32 +127,9 @@ const DrawerContainer = ({
                 );
               })}
             </List>
-            {/* <div style={{ marginTop: "auto" }}>
-              <ListItem disablePadding sx={{ mb: 1 }}>
-                <ListItemButton onClick={() => setShowLogoutModal(true)}>
-                  <ListItemIcon sx={{ minWidth: 0, marginRight: 2 }}>
-                    <LogoutIcon sx={{ color: "red" }} />
-                  </ListItemIcon>
-                  <Typography sx={{ color: "red", fontWeight: "bold" }}>
-                    {"Logout"}
-                  </Typography>
-                </ListItemButton>
-              </ListItem>
-              <Divider />
-              <Typography
-                variant="subtitle2"
-                sx={{ p: 2, mb: 2, color: "#777676" }}
-              >
-                Radiologi, Fakultas Kedokteran Universitas Indonesia
-              </Typography>
-            </div> */}
           </div>
         </Drawer>
         {children}
-        {/* <LogoutModal
-          visible={showLogoutModal}
-          handleClose={() => setShowLogoutModal(false)}
-        /> */}
       </Box>
     </>
   );

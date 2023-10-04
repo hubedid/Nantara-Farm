@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 
-const url = "http://nantarafarm.test/api/";
+const url = "https://nantara-api.hoaks.my.id/api/";
 
 export const get = async (
   apiParams: string
