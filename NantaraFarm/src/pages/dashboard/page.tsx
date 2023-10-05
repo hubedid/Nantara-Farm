@@ -134,7 +134,7 @@ function Dashboard() {
     try {
       const avgWeight = await get("avg-weight-today");
       console.log(avgWeight);
-      setWeightData(avgWeight.data.data.average_weight
+      setWeightData(avgWeight.data.data.average_weight || 0
       );
       toastSuccess(avgWeight.data.meta.message);
     } catch (error) {
@@ -380,7 +380,7 @@ function Dashboard() {
               ) : (
                 <Box display={"flex"} flexGrow={1}>
                   <LineChart
-                    sx={{ width: 1, height: 1 }}
+                    sx={{ width: 1, height: 1, maxHeight: 360 }}
                     xAxis={[{ data: graphAxis }]}
                     series={[
                       {
