@@ -1,31 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 
-const url = "https://jakban.iconpln.co.id/backend-plnicon/public/api/";
-
-export const post = async (
-  api: string,
-  form: any
-): Promise<AxiosResponse<any, any>> => {
-  return await axios.post(url + api, form, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-};
-
-export const postWithAuth = async (
-  api: string,
-  form: any,
-  token: string
-): Promise<AxiosResponse<any, any>> => {
-  return await axios.post(url + api, form, {
-    headers: {
-      // Accept: "multipart/form-data",
-      "Content-Type": "multipart/form-data",
-      Authorization: "Bearer " + token, //Add this line
-    },
-  });
-};
+const url = "https://eb43-180-244-128-228.ngrok-free.app";
 
 export const get = async (
   apiParams: string

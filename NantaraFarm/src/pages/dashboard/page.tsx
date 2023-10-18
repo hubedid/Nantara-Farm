@@ -11,40 +11,65 @@ import Select, {
   ValueContainerProps,
   components,
 } from "react-select";
-import DrawerContainer from "./drawerContainer";
+import DrawerContainer from "./components/drawerContainer";
 import ArrowUpwardOutlinedIcon from "@mui/icons-material/ArrowUpwardOutlined";
 import CameraRearOutlinedIcon from "@mui/icons-material/CameraRearOutlined";
 import { useEffect, useState } from "react";
 import { LineChart } from "@mui/x-charts/LineChart";
+import { get, getWithAuth } from "../../api/api";
+import { toastError, toastSuccess } from "./components/toast";
 
 function Dashboard() {
   const twentyeightdays = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-    22, 23, 24, 25, 26, 27, 28,
+    22, 23, 24, 25, 26, 27, 28
+  ];
+  let twentyeightdata = [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
   ];
   const thirtydays = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
     22, 23, 24, 25, 26, 27, 28, 29, 30,
   ];
+  let thirtydata = [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  ];
   const thirtyonedays = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
     22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
   ];
-  const currentDate = new Date();
-  const [currentMonth, setCurrentMonth] = useState<number>(
-    currentDate.getMonth()
-  );
-  const [graphAxis, setGraphAxis] = useState<number[]>([]);
-  const [cameraList, setCameraList] = useState<any[]>([
-    { nama: "Camera 3", status: "ON" },
-    { nama: "Camera 1", status: "OFF" },
-    { nama: "Camera 3", status: "ON" },
-    { nama: "Camera 1", status: "OFF" },
-    { nama: "Camera 3", status: "ON" },
-    { nama: "Camera 3", status: "ON" },
-    { nama: "Camera 3", status: "ON" },
-    { nama: "Camera 3", status: "ON" },
-  ]);
+  let thirtyonedata = [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  ];
+  const daysPerMonth = [
+    thirtyonedays, // January
+    twentyeightdays,   // February
+    thirtyonedays, // March
+    thirtydays,      // April
+    thirtyonedays,   // May
+    thirtydays,      // June
+    thirtyonedays,   // July
+    thirtyonedays,   // August
+    thirtydays,      // September
+    thirtyonedays,   // October
+    thirtydays,      // November
+    thirtyonedays    // December
+  ];
+  const dataPerMonth = [
+    thirtyonedata, // January
+    twentyeightdata,   // February
+    thirtyonedata, // March
+    thirtydata,      // April
+    thirtyonedata,   // May
+    thirtydata,      // June
+    thirtyonedata,   // July
+    thirtyonedata,   // August
+    thirtydata,      // September
+    thirtyonedata,   // October
+    thirtydata,      // November
+    thirtyonedata    // December
+  ];
+
   const options = [
     { value: 1, label: "Januari" },
     { value: 2, label: "Februari" },
@@ -60,30 +85,90 @@ function Dashboard() {
     { value: 12, label: "Desember" },
   ];
 
+  const currentDate = new Date();
+  const [currentMonth, setCurrentMonth] = useState<number>(
+    currentDate.getMonth()
+  );
+  const [trigger, setTrigger] = useState<boolean>(false);
+  const [isGraphLoading, setIsGraphLoading] = useState<boolean>(true);
+  const [data, setData] = useState<any[]>([]);
+  const [graphData, setGraphData] = useState<any[]>([]);
+  const [graphAxis, setGraphAxis] = useState<number[]>([]);
+  const [cameraList, setCameraList] = useState<any[]>([
+    { nama: "Camera 3", status: "ON" },
+    { nama: "Camera 1", status: "OFF" },
+    { nama: "Camera 3", status: "ON" },
+    { nama: "Camera 1", status: "OFF" },
+    { nama: "Camera 3", status: "ON" },
+    { nama: "Camera 3", status: "ON" },
+    { nama: "Camera 3", status: "ON" },
+    { nama: "Camera 3", status: "ON" },
+  ]);
+
+  const token = localStorage.getItem("access_token");
+  const getDataGrafik = async () => {
+    setIsGraphLoading(true);
+    if (token) {
+      try {
+        const grafik = await get("avg-weight-per-spesific-month?month="+currentMonth);
+        console.log(grafik)
+        setData(
+          grafik.data.data.map((data: any) => {
+            return {
+              date: data.date,
+              average_weight: data.average_weight,
+            };
+          })
+        );
+        toastSuccess(grafik.data.meta.message);
+        setTrigger(true);
+      } catch (error) {
+        toastError("Get Monthly Data Graph Failed");
+        console.log(error)
+      }
+    }
+  };
+
   useEffect(() => {
+    getDataGrafik();
+  },[currentMonth])
+
+  useEffect(() => {
+    setGraphAxis(daysPerMonth[currentMonth - 1]);
+    const newMonthData = Array(graphAxis.length).fill(0);
+    dataPerMonth[currentMonth-1] = newMonthData;
+    data.forEach((item, index) => {
+        let date = item.date
+        console.log(date);
+        dataPerMonth[currentMonth-1][date-1] = item.average_weight
+    })
+    setGraphData(dataPerMonth[currentMonth-1])
     console.log(currentMonth);
     console.log(graphAxis);
-    if (
-      currentMonth === 1 ||
-      currentMonth === 3 ||
-      currentMonth === 5 ||
-      currentMonth === 7 ||
-      currentMonth === 8 ||
-      currentMonth === 10 ||
-      currentMonth === 12
-    ) {
-      setGraphAxis(thirtyonedays);
-    } else if (
-      currentMonth === 4 ||
-      currentMonth === 6 ||
-      currentMonth === 9 ||
-      currentMonth === 11
-    ) {
-      setGraphAxis(thirtydays);
-    } else {
-      setGraphAxis(twentyeightdays);
-    }
-  }, [currentMonth]);
+    setIsGraphLoading(false)
+    // if (
+    //   currentMonth === 1 ||
+    //   currentMonth === 3 ||
+    //   currentMonth === 5 ||
+    //   currentMonth === 7 ||
+    //   currentMonth === 8 ||
+    //   currentMonth === 10 ||
+    //   currentMonth === 12
+    // ) {
+    //   setGraphAxis(thirtyonedays);
+    // } else if (
+    //   currentMonth === 4 ||
+    //   currentMonth === 6 ||
+    //   currentMonth === 9 ||
+    //   currentMonth === 11
+    // ) {
+    //   setGraphAxis(thirtydays);
+    // } else {
+    //   setGraphAxis(twentyeightdays);
+    // }
+  }, [trigger]);
+
+  
 
   // Dropdown Styles
   //   const IndicatorSeparator = ({

@@ -1,6 +1,6 @@
 "use client";
 
-import Logo from "../../assets/Logo_Farm.png";
+import Logo from "../../../assets/Logo_Farm.png";
 
 import {
   Box,
