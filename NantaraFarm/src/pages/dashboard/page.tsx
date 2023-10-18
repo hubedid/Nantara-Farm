@@ -71,18 +71,18 @@ function Dashboard() {
   ];
 
   const options = [
-    { value: 1, label: "Januari" },
-    { value: 2, label: "Februari" },
-    { value: 3, label: "Maret" },
-    { value: 4, label: "April" },
-    { value: 5, label: "Mei" },
-    { value: 6, label: "Juni" },
-    { value: 7, label: "Juli" },
-    { value: 8, label: "Agustus" },
-    { value: 9, label: "September" },
-    { value: 10, label: "Oktober" },
-    { value: 11, label: "November" },
-    { value: 12, label: "Desember" },
+    { value: 0, label: "Januari" },
+    { value: 1, label: "Februari" },
+    { value: 2, label: "Maret" },
+    { value: 3, label: "April" },
+    { value: 4, label: "Mei" },
+    { value: 5, label: "Juni" },
+    { value: 6, label: "Juli" },
+    { value: 7, label: "Agustus" },
+    { value: 8, label: "September" },
+    { value: 9, label: "Oktober" },
+    { value: 10, label: "November" },
+    { value: 11, label: "Desember" },
   ];
 
   const currentDate = new Date();
@@ -108,9 +108,10 @@ function Dashboard() {
   const token = localStorage.getItem("access_token");
   const getDataGrafik = async () => {
     setIsGraphLoading(true);
-    if (token) {
+    // if (token) {
       try {
-        const grafik = await get("avg-weight-per-spesific-month?month="+currentMonth);
+        // setTrigger(false);
+        const grafik = await get("avg-weight-per-specific-month?month="+(currentMonth+1));
         console.log(grafik)
         setData(
           grafik.data.data.map((data: any) => {
@@ -120,53 +121,91 @@ function Dashboard() {
             };
           })
         );
+        console.log(currentMonth)
+        // let newMonthData = Array(graphAxis.length).fill(0);
+        // console.log(newMonthData)
+        setGraphAxis(daysPerMonth[currentMonth]);
+        // dataPerMonth[currentMonth-1] = newMonthData;
+        // data.forEach((item, index) => {
+        //     let dateStr = item.date.toString().substr(8,2);
+        //     if (dateStr[0] === "0"){
+        //       dateStr = dateStr[1];
+        //     }
+        //     let date = parseInt(dateStr);
+            
+        //     console.log(date);
+        //     newMonthData[date-1] = item.average_weight;
+        // })
+        // setGraphData(dataPerMonth[currentMonth]);
         toastSuccess(grafik.data.meta.message);
         setTrigger(true);
       } catch (error) {
         toastError("Get Monthly Data Graph Failed");
         console.log(error)
-      }
-    }
+      } 
+      // finally {
+      //   // setIsGraphLoading(false)
+      // }
+    // }
   };
 
   useEffect(() => {
-    getDataGrafik();
-  },[currentMonth])
+    let newMonthData = Array(graphAxis.length).fill(0);
+    console.log(newMonthData)
+    if (newMonthData && data){
+      data.forEach((item, index) => {
+        let dateStr = item.date.toString().substr(8,2);
+        if (dateStr[0] === "0"){
+          dateStr = dateStr[1];
+        }
+        let date = parseInt(dateStr);
+        
+        console.log(date);
+        newMonthData[date-1] = item.average_weight;
+    })
+    setGraphData(newMonthData);
+    setIsGraphLoading(false);
+    }
+  },[trigger, currentMonth, graphAxis])
 
   useEffect(() => {
-    setGraphAxis(daysPerMonth[currentMonth - 1]);
-    const newMonthData = Array(graphAxis.length).fill(0);
-    dataPerMonth[currentMonth-1] = newMonthData;
-    data.forEach((item, index) => {
-        let date = item.date
-        console.log(date);
-        dataPerMonth[currentMonth-1][date-1] = item.average_weight
-    })
-    setGraphData(dataPerMonth[currentMonth-1])
-    console.log(currentMonth);
-    console.log(graphAxis);
-    setIsGraphLoading(false)
-    // if (
-    //   currentMonth === 1 ||
-    //   currentMonth === 3 ||
-    //   currentMonth === 5 ||
-    //   currentMonth === 7 ||
-    //   currentMonth === 8 ||
-    //   currentMonth === 10 ||
-    //   currentMonth === 12
-    // ) {
-    //   setGraphAxis(thirtyonedays);
-    // } else if (
-    //   currentMonth === 4 ||
-    //   currentMonth === 6 ||
-    //   currentMonth === 9 ||
-    //   currentMonth === 11
-    // ) {
-    //   setGraphAxis(thirtydays);
-    // } else {
-    //   setGraphAxis(twentyeightdays);
-    // }
-  }, [trigger]);
+    getDataGrafik();
+    // setGraphAxis(daysPerMonth[currentMonth]);
+    // const newMonthData = Array(graphAxis.length).fill(0);
+    // dataPerMonth[currentMonth-1] = newMonthData;
+    // data.forEach((item, index) => {
+    //     let date = item.date
+    //     console.log(date);
+    //     dataPerMonth[currentMonth][date] = item.average_weight
+    // })
+    // setGraphData(dataPerMonth[currentMonth])
+  },[currentMonth])
+
+  // useEffect(() => {
+  //   // console.log(currentMonth);
+  //   // console.log(graphAxis);
+  //   // console.log(graphData);
+  //   // if (
+  //   //   currentMonth === 1 ||
+  //   //   currentMonth === 3 ||
+  //   //   currentMonth === 5 ||
+  //   //   currentMonth === 7 ||
+  //   //   currentMonth === 8 ||
+  //   //   currentMonth === 10 ||
+  //   //   currentMonth === 12
+  //   // ) {
+  //   //   setGraphAxis(thirtyonedays);
+  //   // } else if (
+  //   //   currentMonth === 4 ||
+  //   //   currentMonth === 6 ||
+  //   //   currentMonth === 9 ||
+  //   //   currentMonth === 11
+  //   // ) {
+  //   //   setGraphAxis(thirtydays);
+  //   // } else {
+  //   //   setGraphAxis(twentyeightdays);
+  //   // }
+  // }, [trigger]);
 
   
 
@@ -309,7 +348,7 @@ function Dashboard() {
               sx={{ boxShadow: "0px 4px 50px -7px rgba(54, 8, 192, 0.20)" }}
               padding={2.5}
               paddingBottom={0}
-              width={"75%"}
+              maxWidth={"75%"}
             >
               <Box display={"flex"} justifyContent={"space-between"}>
                 <Typography
@@ -323,11 +362,11 @@ function Dashboard() {
                   required={false}
                   options={options}
                   placeholder={"Bulan Ini"}
-                  onChange={(selectedOption) =>
+                  onChange={(selectedOption: any) =>
                     selectedOption && setCurrentMonth(selectedOption.value)
                   }
                   isSearchable={false}
-                  theme={(theme) => ({
+                  theme={(theme: any) => ({
                     ...theme,
                     borderRadius: 8,
                     border: "2px",
@@ -338,7 +377,7 @@ function Dashboard() {
                     },
                   })}
                   styles={{
-                    control: (baseStyles, state) => ({
+                    control: (baseStyles: any, state: any) => ({
                       ...baseStyles,
                       borderRadius: 50,
                       height: "38px",
@@ -350,21 +389,21 @@ function Dashboard() {
                         borderColor: state.isFocused ? "#FF7F48" : "#FF7F48",
                       },
                     }),
-                    singleValue: (base) => ({
+                    singleValue: (base: any) => ({
                       ...base,
                       color: "#FF7F48",
                       textAlign: "center",
                     }),
-                    valueContainer: (base) => ({
+                    valueContainer: (base: any) => ({
                       ...base,
                       paddingRight: 0,
                       color: "#FF7F48",
                     }),
-                    indicatorSeparator: (base) => ({
+                    indicatorSeparator: (base: any) => ({
                       ...base,
                       display: "none",
                     }),
-                    menu: (base) => ({
+                    menu: (base: any) => ({
                       ...base,
                       color: "#000000",
                       minWidth: "120px",
@@ -372,20 +411,24 @@ function Dashboard() {
                   }}
                 />
               </Box>
-              <LineChart
-                xAxis={[{ data: twentyeightdays }]}
-                series={[
-                  {
-                    data: [
-                      2, 5.5, 2, 8.5, 1.5, 5, 2, 5.5, 2, 8.5, 1.5, 5, 2, 5.5, 2,
-                      8.5, 1.5, 5, 2, 5.5, 2, 8.5, 1.5, 5, 2, 5.5, 2, 8.5,
-                    ],
-                    color: "#FF7F48",
-                  },
-                ]}
-                width={825}
-                height={360}
-              />
+              {
+                isGraphLoading ? 
+                <Typography>
+                  Kontol
+                </Typography>
+                :
+                <LineChart
+                  xAxis={[{ data: graphAxis }]}
+                  series={[
+                    {
+                      data: graphData,
+                      color: "#FF7F48",
+                    },
+                  ]}
+                  width={800}
+                  height={360}
+                />
+              }
             </Box>
             <Box
               borderRadius={4}

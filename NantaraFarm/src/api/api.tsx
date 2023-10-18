@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 
-const url = "https://eb43-180-244-128-228.ngrok-free.app";
+const url = "http://nantarafarm.test/api/";
 
 export const get = async (
   apiParams: string
