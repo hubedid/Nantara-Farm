@@ -1,43 +1,67 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { Button } from '@mui/material'
+import { createTheme, ThemeProvider } from '@mui/material';
+const theme = createTheme({
+  typography: {
+    fontFamily: [
+      'Poppins',
+      'sans-serif',
+    ].join(','),
+  },});
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Routes,
+  Route,
+  BrowserRouter,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
+// import DaftarUser from "./pages/daftar_user/daftar_user";
+import Dashboard from "./pages/dashboard/page";
+// import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+// const router = createBrowserRouter([{ path: "*", Component: Root}, ], { basename: "/sipreman" });
 
+// const ProtectedRoute = () => {
+//   const token = localStorage.getItem("access_token");
+
+//   if (!token) {
+//     return <Navigate to="/" replace />;
+//   }
+
+//   return (
+//     <UserProvider>
+//       <Outlet />
+//     </UserProvider>
+//   );
+// };
+
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <Button color="secondary">Secondary</Button>
-      <Button variant="contained" color="success">
-        Success
-      </Button>
-      <Button variant="outlined" color="error">
-        Error
-      </Button>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <Routes>
+          {/* <Route element={<ProtectedRoute/>}> */}
+
+            <Route path="/dashboard" element={<Dashboard/>} />
+            
+          {/* </Route> */}
+          {/* <Route path="/" element={<Login />} /> */}
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
+
+  );
 }
 
-export default App
+// function Root() {
+//   return (
+//     <Routes>
+//       {/* <Route element={<ProtectedRoute/>}> */}
+
+//         <Route path="/dashboard" element={<Dashboard/>} />
+        
+//       {/* </Route> */}
+//       {/* <Route path="/" element={<Login />} /> */}
+//     </Routes>
+//   );
+// }
