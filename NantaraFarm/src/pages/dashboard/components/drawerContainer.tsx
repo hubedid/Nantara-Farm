@@ -1,6 +1,6 @@
 "use client";
 
-import Logo from "../../../assets/Logo_Farm.png";
+// import Logo from "../../../assets/Logo_Farm.png";
 
 import {
   Box,
@@ -45,7 +45,7 @@ const DrawerContainer = ({
         style={{ display: "flex", height: height ?? "auto", width: "100vw" }}
       >
         <Drawer
-          style={{ width: 312 }}
+          style={{ width: 260 }}
           variant="permanent"
           anchor="left"
           PaperProps={{ elevation: 0 }}
@@ -54,7 +54,7 @@ const DrawerContainer = ({
             style={{
               display: "flex",
               flexDirection: "column",
-              width: 288,
+              width: 236,
               height: "100%",
               backgroundColor: "#F5F5F5",
               paddingRight: 12,
@@ -64,12 +64,13 @@ const DrawerContainer = ({
           >
             <Box
               display={"flex"}
-              justifyContent={"space-between"}
+              justifyContent={"center"}
               alignItems={"center"}
+              gap={2}
             >
-              <img src={Logo} alt="" width={55} height={55} />
+              <img src={"/assets/Logo_Farm.png"} alt="" width={55} height={55} />
               <Typography fontWeight={"bold"} fontSize={32} color={"#FF7F48"}>
-                NantaraFarm
+                Inspirer
               </Typography>
             </Box>
             <Toolbar />

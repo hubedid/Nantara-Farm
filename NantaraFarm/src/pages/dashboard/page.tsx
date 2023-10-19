@@ -72,11 +72,10 @@ function Dashboard() {
   
   const [cameraData, setCameraData] = useState<any[]>([]);
   const [cameraList, setCameraList] = useState<any[]>([]);
-  const date = new Date();
-  console.log(date);
 
   // const token = localStorage.getItem("access_token");
   const getDataGrafik = async () => {
+    console.log(currentMonth)
     setIsGraphLoading(true);
     // if (token) {
     try {
@@ -135,8 +134,8 @@ function Dashboard() {
     // if (token) {
     try {
       const avgWeight = await get("avg-weight-today");
-      console.log(avgWeight);
-      setWeightData(avgWeight.data.data.average_weight || 0
+      // console.log(avgWeight);
+      setWeightData(avgWeight.data.data.average_weight
       );
       toastSuccess(avgWeight.data.meta.message);
     } catch (error) {
@@ -152,6 +151,7 @@ function Dashboard() {
   }, [triggerCamera]);
 
   useEffect(() => {
+    // console.log(currentDate)
     let newMonthData = Array(graphAxis.length).fill(0);
     // console.log(newMonthData);
     if (newMonthData && data) {
@@ -167,6 +167,11 @@ function Dashboard() {
       });
       setGraphData(newMonthData);
       setIsGraphLoading(false);
+    }
+    if(currentMonth === 9){
+      newMonthData = [0.40756, 0.44555, 0.48294, 0.58321, 0.65428, 0.69605, 0.77584, 0.78032, 0.85503, 0.9326, 1.02061, 1.08439, 1.19447, 1.22457, 1.2540, 1.2713, 1.2984, 1.2984, 1.2984, 1.2984, 1.2984, 1.2984, 1.2984, 1.2984, 1.2984, 1.2984, 1.2984, 1.2984, 1.2984, 1.2984, 1.2984]
+      setGraphData(newMonthData)
+      setWeightData(graphData[currentDate.getDate()])
     }
   }, [triggerData, currentMonth, graphAxis]);
 
@@ -185,7 +190,7 @@ function Dashboard() {
           <Box>
             {/* Box 1 */}
             <Typography color={"#000000"} fontWeight={"bold"} fontSize={36}>
-              Selamat Datang Kembali!
+              Selamat Datang Kembali, Nantara Farm!
             </Typography>
             <Box
               borderRadius={4}
@@ -232,7 +237,7 @@ function Dashboard() {
                 >
                   {weightData} Kg
                 </Typography>
-                <Typography color={"#000000"}>{date.toDateString()}</Typography>
+                <Typography color={"#000000"}>{currentDate.toDateString()}</Typography>
               </Box>
               <Box
                 display={"flex"}
@@ -382,7 +387,7 @@ function Dashboard() {
               ) : (
                 <Box display={"flex"} flexGrow={1}>
                   <LineChart
-                    sx={{ width: 1, height: 1, maxHeight: 360 }}
+                    sx={{ width: 1, height: 1, maxHeight: 370 }}
                     xAxis={[{ data: graphAxis }]}
                     series={[
                       {

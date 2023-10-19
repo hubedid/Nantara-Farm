@@ -1,9 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { post } from "../../api/api";
-import { Box } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Typography,
+} from "@mui/material";
+import imageURL from "../../assets/ternak_cover.jpg";
+import { VisibilityOff, Visibility } from "@mui/icons-material";
 
 function Login() {
+  const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -23,45 +33,87 @@ function Login() {
       console.log(error);
     }
   };
+
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
   return (
     <>
-      <Box width={1} display={'flex'}>
-        <Box width={1/2} className="w-1/2 h-screen bg-[#EEF0F2] flex items-center justify-center">
-          <div className="flex flex-col w-full h-screen gap-16 p-5">
-            <div className="h-1/3 flex flex-col items-start">
-              <h1 className="header1 text-blue-primary">New SiPreman</h1>
-              <h2 className="header2 text-blue-primary">
-                Sistem Informasi Preventive Maintenance
-              </h2>
-            </div>
-            <div className="h-1/3 flex items-center justify-center">
-              <img src={"assets/pln_icon_plus.svg"} alt="" />
-            </div>
-            <div className="h-1/3"></div>
-          </div>
+      <Box width={"100vw"} display={"flex"}>
+        <Box
+          width={1 / 2}
+          height={"100vh"}
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          sx={{ backgroundImage: `url(${imageURL})`, backgroundSize: "cover" }}
+        >
+          {/*   */}
         </Box>
-        <div className="w-1/2 h-screen bg-[#F8F8F8] flex flex-col items-center justify-center px-52">
-          <h1 className="header1 text-blue-primary mb-12">Login</h1>
-          <form action="" onSubmit={(e) => postLogin(e)} className="w-full">
-            <TextField
-              style="mb-8"
-              type="standart"
+        <Box
+          width={1 / 2}
+          height={"100vh"}
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          flexDirection={"column"}
+          bgcolor={"#F5F5F5"}
+        >
+          <Typography
+            variant="h1"
+            mb={"48px"}
+            color={"#FF7F48"}
+            fontWeight={600}
+          >
+            Inspirer
+          </Typography>
+          <form
+            action=""
+            onSubmit={(e) => postLogin(e)}
+            style={{ display: "flex", flexDirection: "column" }}
+          >
+            <TextField 
+              id="Username" 
+              label="Username"
+              variant="outlined"
+              sx={{ marginBottom: "32px" }}
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
-            <TextField
-              style="mb-8"
-              type="pass"
+            <TextField 
+              id="Password" 
+              label="Password"
+              variant="outlined"
+              type={showPassword ? "text" : "password"}
+              sx={{ marginBottom: "32px" }}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              InputProps={{
+                endAdornment: 
+                <InputAdornment position="end">
+                  <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                </InputAdornment>,
+              }}
             />
-            <div className="flex justify-center">
-              <Button type="login" />
-            </div>
+            <Box display={"flex"} justifyContent={"center"}>
+              <Button variant="contained" type="submit" sx={{backgroundColor: "#FF7F48"}}>Log In</Button>
+            </Box>
           </form>
-        </div>
+        </Box>
       </Box>
     </>
   );
