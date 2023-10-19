@@ -1,5 +1,6 @@
 import {
   Box,
+  CircularProgress,
   List,
   ListItem,
   ListItemIcon,
@@ -344,11 +345,13 @@ function Dashboard() {
             {/* Box 2 */}
             <Box
               borderRadius={4}
+              display={'flex'}
+              flexDirection={'column'}
               bgcolor={"#FFFFFF"}
               sx={{ boxShadow: "0px 4px 50px -7px rgba(54, 8, 192, 0.20)" }}
               padding={2.5}
               paddingBottom={0}
-              maxWidth={"75%"}
+              width={"75%"}
             >
               <Box display={"flex"} justifyContent={"space-between"}>
                 <Typography
@@ -413,21 +416,23 @@ function Dashboard() {
               </Box>
               {
                 isGraphLoading ? 
-                <Typography>
-                  Kontol
-                </Typography>
+                <Box sx={{ display: 'flex', color: "#FF7F48" }} marginX={'auto'} alignItems={'center'} flexGrow={1}>
+                  <CircularProgress color="inherit"/>
+                </Box>
+                // <CircularProgress color=/>
                 :
-                <LineChart
-                  xAxis={[{ data: graphAxis }]}
-                  series={[
-                    {
-                      data: graphData,
-                      color: "#FF7F48",
-                    },
-                  ]}
-                  width={800}
-                  height={360}
-                />
+                <Box display={'flex'} flexGrow={1}>
+                  <LineChart
+                    sx={{width: 1, height: 1}}
+                    xAxis={[{ data: graphAxis }]}
+                    series={[
+                      {
+                        data: graphData,
+                        color: "#FF7F48",
+                      },
+                    ]}
+                  />
+                </Box>
               }
             </Box>
             <Box
@@ -435,12 +440,13 @@ function Dashboard() {
               bgcolor={"#FFFFFF"}
               sx={{ boxShadow: "0px 4px 50px -7px rgba(54, 8, 192, 0.20)" }}
               padding={2.5}
-              width={"25%"}
+              width={216}
+              flexShrink={0}
             >
               <Typography color={"#000000"} fontSize={22} fontWeight={"bold "}>
                 Status Kamera
               </Typography>
-              <Box sx={{ width: 1, overflow: "auto", height: 345 }}>
+              <Box sx={{ width: 1, overflow: "auto", height: 345, paddingRight: "10px" }}>
                 {cameraList.map((item, index) => {
                   return (
                     <Box
