@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import imageURL from "../../assets/ternak_cover.jpg";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
+import { toastError } from "../dashboard/components/toast";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -31,6 +32,7 @@ function Login() {
       navigate("/dashboard");
     } catch (error) {
       console.log(error);
+      toastError("Login Failed, Please Retry!")
     }
   };
 
