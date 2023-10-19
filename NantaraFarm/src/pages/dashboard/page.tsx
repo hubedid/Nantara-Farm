@@ -72,6 +72,8 @@ function Dashboard() {
   
   const [cameraData, setCameraData] = useState<any[]>([]);
   const [cameraList, setCameraList] = useState<any[]>([]);
+  const date = new Date();
+  console.log(date);
 
   // const token = localStorage.getItem("access_token");
   const getDataGrafik = async () => {
@@ -230,7 +232,7 @@ function Dashboard() {
                 >
                   {weightData} Kg
                 </Typography>
-                <Typography color={"#000000"}>Wed, Jul 24</Typography>
+                <Typography color={"#000000"}>{date.toDateString()}</Typography>
               </Box>
               <Box
                 display={"flex"}
